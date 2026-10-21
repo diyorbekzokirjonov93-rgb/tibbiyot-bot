@@ -1,4 +1,3 @@
-
 require("dotenv").config();
 
 const TelegramBot = require("node-telegram-bot-api");
@@ -9,18 +8,22 @@ const path = require("path");
 const TOKEN = process.env.BOT_TOKEN;
 const ADMIN_ID = 258281288;
 const PROFILE_URL = process.env.PROFILE_URL;
+const DOWNLOAD_URL = process.env.DOWNLOAD_URL;
 
 // Sozlamalarni tekshirish
 if (!TOKEN) {
   throw new Error("BOT_TOKEN .env faylida mavjud emas!");
 }
 
-if (
-  !PROFILE_URL ||
-  !/^https?:\/\/\S+$/i.test(PROFILE_URL)
-) {
+if (!PROFILE_URL || !/^https?:\/\/\S+$/i.test(PROFILE_URL)) {
   throw new Error(
     "PROFILE_URL .env faylida noto'g'ri yoki mavjud emas!"
+  );
+}
+
+if (!DOWNLOAD_URL || !/^https?:\/\/\S+$/i.test(DOWNLOAD_URL)) {
+  throw new Error(
+    "DOWNLOAD_URL .env faylida noto'g'ri yoki mavjud emas!"
   );
 }
 
@@ -81,6 +84,8 @@ function mainMenu() {
     reply_markup: {
       keyboard: [
         ["🗳 Ovoz berish"],
+        ["📱 Nomer bilan ovoz berish"],
+        ["📥 Ovi yukla"],
         ["📊 Statistika", "👤 Profil"]
       ],
       resize_keyboard: true
@@ -101,6 +106,8 @@ bot.onText(/^\/start$/, (msg) => {
 🌸 Shaxnoza Jo'rayeva uchun ovoz berish botiga xush kelibsiz!
 
 🗳 Ovoz berish — profil sahifasiga o'tish
+📱 Nomer bilan ovoz berish — ovoz berish havolasi
+📥 Ovi yukla — yuklab olish havolasi
 📊 Statistika — bot statistikasi
 👤 Profil — shaxsiy ma'lumotlaringiz`,
     mainMenu()
@@ -136,6 +143,46 @@ bot.on("message", (msg) => {
               {
                 text: "🌐 Shaxnoza Jo'rayeva profiliga o'tish",
                 url: PROFILE_URL
+              }
+            ]
+          ]
+        }
+      }
+    );
+  }
+
+  // NOMER BILAN OVOZ BERISH
+  if (msg.text === "📱 Nomer bilan ovoz berish") {
+    return bot.sendMessage(
+      chatId,
+      "📱 Nomer bilan ovoz berish uchun quyidagi tugmani bosing:",
+      {
+        reply_markup: {
+          inline_keyboard: [
+            [
+              {
+                text: "📱 Nomer bilan ovoz berish",
+                url: DOWNLOAD_URL
+              }
+            ]
+          ]
+        }
+      }
+    );
+  }
+
+  // OVI YUKLA
+  if (msg.text === "📥 Ovi yukla") {
+    return bot.sendMessage(
+      chatId,
+      "📥 Yuklab olish uchun quyidagi tugmani bosing:",
+      {
+        reply_markup: {
+          inline_keyboard: [
+            [
+              {
+                text: "📥 Ovi yukla",
+                url: DOWNLOAD_URL
               }
             ]
           ]
